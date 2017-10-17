@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.main-cont {
+    width: 500px;
+    max-width: 100%;
+    margin: auto;
+}
+.main-cont .task-section {
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #000;
+}
+</style>
+</head>
+<body>
+<div class="main-cont">
+    <h1>JSON tasks</h1>
+    <div class="task-section">
+        <h3>Example JSON</h3>
+        <pre id="example-json"></pre>
+    </div>
+    <div class="task-section">
+        <h3>Task 1</h3>
+        <pre id="task-one-result"></pre>
+    </div>
+    <div class="task-section">
+        <h3>Task 2</h3>
+        <pre id="task-two-result"></pre>
+    </div>
+</div>
+
+<script src="/js/all.js"></script>
+<script>
+(function() {
+    var json = loadJsonFile('/data.json');
+
+    /**
+     * Task 1.
+     */
+    function addNewNotificationAction(title, message) {
+        if (!(json.actions instanceof Array)) {
+            json.actions = [];
+        }
+        if ('string' !== typeof title || '' === title.trim() ||
+            'string' !== typeof message || '' === message.trim()
+        ) {
+            return;
+        }
+        json.actions.push({
+            "type": "notification",
+            "params": {
+                "title": title,
+                "message": message
+            }
+        });
+    }
+
+    /**
+     * Task 2.
+     * Set action property of the first action to null and remove the link property.
+     */
+    function task2() {
+        if (!(json.actions instanceof Array)) {
+            console.error('Actions is not an array.');
+            return;
+        }
+
+        for (var i in json.actions) {
+            if (json.actions[i].params &&
+                'object' === typeof json.actions[i].params &&
+                'string' === typeof json.actions[i].params.action &&
+                '' !== json.actions[i].params.action.trim()
+            ) {
+                json.actions[i].params.action = null;
+                delete json.actions[i].params.link;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    var ejs = document.getElementById('example-json');
+    if (ejs) {
+        ejs.innerHTML = JSON.stringify(json, null, 2);
+    }
+
+    addNewNotificationAction('dummy-title-1', 'dummy-message-1');
+    var t1r = document.getElementById('task-one-result');
+    if (t1r) {
+        t1r.innerHTML = JSON.stringify(json, null, 2);
+    }
+
+    task2();
+    var t2r = document.getElementById('task-two-result');
+    if (t2r) {
+        t2r.innerHTML = JSON.stringify(json, null, 2);
+    }
+})();
+</script>
+</body>
+</html>

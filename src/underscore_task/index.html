@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.main-cont {
+    width: 500px;
+    max-width: 100%;
+    margin: auto;
+}
+.main-cont .task-section {
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #000;
+}
+.task-section .task-note {
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="main-cont">
+    <h1>Underscore.js tasks</h1>
+    <div class="task-section">
+        <h3>Example JSON actions</h3>
+        <pre id="example-json"></pre>
+    </div>
+    <div class="task-section">
+        <h3>Task 1</h3>
+        <div class="task-note">NOTE: If there is a duplicate action type then it is returned only once.</div>
+        <pre id="task-one-result"></pre>
+    </div>
+    <div class="task-section">
+        <h3>Task 2</h3>
+        <div class="task-note">NOTE: If there is a duplicate action type then the last one is retrieved.</div>
+        <pre id="task-two-result"></pre>
+    </div>
+    <div class="task-section">
+        <h3>Task 3</h3>
+        <pre id="task-three-result"></pre>
+    </div>
+</div>
+
+<script src="/js/all.js"></script>
+<script>
+(function(_) {
+    var json = loadJsonFile('/data.json');
+
+    /**
+     * Gets the action types.
+     * If there is a duplicate action type then it is returned only once.
+     */
+    function task1() {
+        // remove _.uniq to show duplicates
+        var result = _.uniq(
+            _.map(json.actions, _.property('type'))
+        );
+
+        return result;
+    }
+
+    /**
+     * Convert actions array into an object where the key is the actions' type and the value are its params.
+     * If there is a duplicate action type then the last one is retrieved.
+     */
+    function task2() {
+        var result = _.object(
+            _.map(json.actions, _.property('type')),
+            _.map(json.actions, _.property('params'))
+        );
+
+        return result;
+    }
+
+    function task3() {
+        var a = ["0", 2, 4, 6, null, [], 8, 10];
+        var filtered = _.filter(a, _.isNumber)
+        var sum = _.reduce(
+            filtered,
+            function(saved, cur) { return saved + cur; },
+            0
+        );
+        var size = _.size(filtered);
+
+        return {
+            "sum": sum,
+            "avg": sum / (0 >= size ? 1 : size)
+        };
+    }
+
+    var task1Result = task1();
+    var task2Result = task2();
+    var task3Result = task3();
+
+    var ejs = document.getElementById('example-json');
+    if (ejs) {
+        ejs.innerHTML = JSON.stringify(json.actions, null, 2);
+    }
+
+    var t1r = document.getElementById('task-one-result');
+    if (t1r) {
+        t1r.innerHTML = task1Result;
+    }
+    var t2r = document.getElementById('task-two-result');
+    if (t2r) {
+        t2r.innerHTML = JSON.stringify(task2Result, null, 2);
+    }
+    var t3r = document.getElementById('task-three-result');
+    if (t3r) {
+        t3r.innerHTML = JSON.stringify(task3Result, null, 2);;
+    }
+    console.log('task1: ' + task1Result);
+    console.log('task2: ' + JSON.stringify(task2(), null, 2));
+    console.log('task3: SUM=' + task3Result.sum + ', AVG=' + task3Result.avg);
+})(_);
+</script>
+</body>
+</html>
