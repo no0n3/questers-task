@@ -7,18 +7,16 @@
     margin: auto;
 }
 
-textarea#task-one-ta {
+textarea.task-one-ta {
     width: 100%;
     height: 500px;
-   resize: none;
+    resize: none;
 }
 </style>
 </head>
 <body>
 
-<div class="ta-cont">
-    <textarea id="task-one-ta"></textarea>
-</div>
+<div class="ta-cont"></div>
 
 <script src="/js/all.js"></script>
 <script>
@@ -26,8 +24,14 @@ textarea#task-one-ta {
     // task1
     var json = loadJsonFile('/data.json');
 
-    var ta = document.getElementById('task-one-ta');
-    ta.value = JSON.stringify(json, null, 4);
+    var tac = document.getElementsByClassName('ta-cont');
+    if (tac.length >= 1) {
+        var ta = document.createElement('textarea');
+        ta.setAttribute('class', 'task-one-ta')
+        ta.value = JSON.stringify(json, null, 4);
+
+        tac[0].appendChild(ta);
+    }
 })();
 
 (function() {
